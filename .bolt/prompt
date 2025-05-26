@@ -1,0 +1,27 @@
+Create a Node.js/TypeScript project that integrates sigoden/aichat with sigoden/llm-functions, sigoden/argc, and jq, following these requirements:
+
+1. Create a new project that combines:
+   - sigoden/aichat for chat interface
+   - sigoden/llm-functions for function calling
+   - sigoden/argc for command-line argument parsing
+   - jq for JSON processing
+
+2. Implement the following features:
+   - Command-line interface using argc for handling user inputs and options
+   - Chat functionality using aichat as the primary interface
+   - Function calling capabilities using llm-functions
+   - JSON data manipulation using jq for processing responses
+
+3. The integration should:
+   - Handle proper error cases
+   - Include TypeScript type definitions
+   - Follow best practices for each library
+   - Provide clear documentation for usage
+
+4. Include example usage showing:
+   - Basic chat commands
+   - Function calling scenarios
+   - JSON processing with jq
+   - Command-line argument handling
+
+Please provide the implementation with proper error handling, type safety, and documentation.
