@@ -62,7 +62,7 @@ export const saveConfig = (config: AppConfig, configPath: string): void => {
  * @returns The merged configuration
  */
 const mergeConfigs = <T extends Record<string, any>>(baseConfig: T, overrideConfig: Record<string, any>): T => {
-  const result = { ...baseConfig };
+  const result = { ...baseConfig } as T;
   
   for (const key of Object.keys(overrideConfig)) {
     if (key in baseConfig) {
@@ -75,10 +75,10 @@ const mergeConfigs = <T extends Record<string, any>>(baseConfig: T, overrideConf
         !Array.isArray(overrideConfig[key])
       ) {
         // Both values are objects, merge them recursively
-        result[key] = mergeConfigs(baseConfig[key], overrideConfig[key]);
+        result[key] = mergeConfigs(baseConfig[key], overrideConfig[key]) as T[Extract<keyof T, string>];
       } else {
         // Simple value, override it
-        result[key] = overrideConfig[key];
+        result[key] = overrideConfig[key] as T[Extract<keyof T, string>];
       }
     }
   }

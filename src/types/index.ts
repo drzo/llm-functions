@@ -24,3 +24,17 @@ export interface AppConfig {
   logging: LoggingConfig;
   [key: string]: any;
 }
+
+export interface ChatOptions {
+  model: string;
+  temperature?: number;
+  maxTokens?: number;
+  systemPrompt?: string;
+}
+
+export interface CommandResult {
+  success: boolean;
+  data?: any;
+  error?: Error;
+  duration?: number;
+}
