@@ -1,215 +1,140 @@
-# LLM Functions
+# AI CLI Integration
 
-This project empowers you to effortlessly build powerful LLM tools and agents using familiar languages like Bash, JavaScript, and Python. 
+A powerful CLI tool that integrates [aichat](https://github.com/sigoden/aichat), [llm-functions](https://github.com/sigoden/llm-functions), [argc](https://github.com/sigoden/argc), and [jq](https://github.com/jqlang/jq) for enhanced AI-powered command-line interactions.
 
-Forget complex integrations, **harness the power of [function calling](https://platform.openai.com/docs/guides/function-calling)** to connect your LLMs directly to custom code and unlock a world of possibilities. Execute system commands, process data, interact with APIs –  the only limit is your imagination.
+## Features
 
-**Tools Showcase**
-![llm-function-tool](https://github.com/user-attachments/assets/40c77413-30ba-4f0f-a2c7-19b042a1b507)
-
-**Agents showcase**
-![llm-function-agent](https://github.com/user-attachments/assets/6e380069-8211-4a16-8592-096e909b921d)
+- **Chat with AI**: Interact with AI models directly from the command line
+- **Function Calling**: Execute tools and operations using AI's function calling capability
+- **Agent Support**: Use specialized AI agents for specific tasks
+- **JSON Processing**: Process and transform JSON data using jq
+- **Command-line Interface**: Built with TypeScript and proper CLI structure
 
 ## Prerequisites
 
-Make sure you have the following tools installed:
+Before using this tool, you need to have the following installed:
 
-- [argc](https://github.com/sigoden/argc): A bash command-line framework and command runner
-- [jq](https://github.com/jqlang/jq): A JSON processor
+- [Node.js](https://nodejs.org/) (v14 or later)
+- [aichat](https://github.com/sigoden/aichat)
+- [argc](https://github.com/sigoden/argc)
+- [jq](https://github.com/jqlang/jq)
+- [llm-functions](https://github.com/sigoden/llm-functions) (setup and configured)
 
-## Getting Started with [AIChat](https://github.com/sigoden/aichat)
+## Installation
 
-**Currently, AIChat is the only CLI tool that supports `llm-functions`. We look forward to more tools supporting `llm-functions`.**
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/ai-cli-integration.git
+cd ai-cli-integration
 
-### 1. Clone the repository
+# Install dependencies
+npm install
 
-```sh
-git clone https://github.com/sigoden/llm-functions
-cd llm-functions
+# Build the project
+npm run build
+
+# Link the CLI tool globally
+npm link
 ```
 
-### 2. Build tools and agents
+## Configuration
 
-#### I. Create a `./tools.txt` file with each tool filename on a new line.
-
-```
-get_current_weather.sh
-execute_command.sh
-#execute_py_code.py
-``` 
-
-<details>
-<summary>Where is the web_search tool?</summary>
-<br>
-
-The `web_search` tool itself doesn't exist directly, Instead, you can choose from a variety of web search tools.
-
-To use one as the `web_search` tool, follow these steps:
-
-1. **Choose a Tool:** Available tools include:
-    * `web_search_cohere.sh`
-    * `web_search_perplexity.sh`
-    * `web_search_tavily.sh`
-    * `web_search_vertexai.sh`
-
-2. **Link Your Choice:** Use the `argc` command to link your chosen tool as `web_search`. For example, to use `web_search_perplexity.sh`:
-
-    ```sh
-    $ argc link-web-search web_search_perplexity.sh
-    ```
-
-    This command creates a symbolic link, making `web_search.sh` point to your selected `web_search_perplexity.sh` tool. 
-
-Now there is a `web_search.sh` ready to be added to your `./tools.txt`.
-
-</details>
-
-#### II. Create a `./agents.txt` file with each agent name on a new line.
+Create a `.env` file based on the `.env.example` template:
 
 ```
-coder
-todo
+# AI Chat Configuration
+OPENAI_API_KEY=your_openai_api_key_here
+AICHAT_MODEL=gpt-4-turbo
+
+# llm-functions Configuration
+LLM_FUNCTIONS_DIR=path/to/llm-functions
+
+# Log Level
+LOG_LEVEL=info
 ```
 
-#### III. Build `bin` and `functions.json`
+Initialize the configuration:
 
-```sh
-argc build
+```bash
+aicli init
 ```
 
-#### IV. Ensure that everything is ready (environment variables, Node/Python dependencies, mcp-bridge server)
+## Usage
 
-```sh
-argc check
+### Basic Chat
+
+```bash
+# Start a chat with AI
+aicli chat "Tell me about TypeScript"
+
+# Use a specific model
+aicli chat -m gpt-4-turbo "What's new in Node.js 18?"
+
+# Set a custom system prompt
+aicli chat -s "You are a helpful assistant specialized in JavaScript" "How do I use async/await?"
 ```
 
-### 3. Link LLM-functions and AIChat
+### Function Execution
 
-AIChat expects LLM-functions to be placed in AIChat's **functions_dir** so that AIChat can use the tools and agents that LLM-functions provides.
+```bash
+# Execute a tool with parameters
+aicli tool -n get_current_weather -p '{"location":"New York"}'
 
-You can symlink this repository directory to AIChat's **functions_dir** with:
-
-```sh
-ln -s "$(pwd)" "$(aichat --info | sed -n 's/^functions_dir\s\+//p')"
-# OR
-argc link-to-aichat
+# Process the result with jq
+aicli tool -n get_current_weather -p '{"location":"New York"}' -j '.temperature'
 ```
 
-Alternatively, you can tell AIChat where the LLM-functions directory is by using an environment variable:
+### Using Agents
 
-```sh
-export AICHAT_FUNCTIONS_DIR="$(pwd)"
+```bash
+# Use the todo agent
+aicli agent -n todo "List all my todos"
+
+# Use the coder agent with a specific model
+aicli agent -n coder -m gpt-4-turbo "Create a React component for a contact form"
 ```
 
-### 4. Start using the functions
+### JSON Processing
 
-Done! Now you can use the tools and agents with AIChat.
+```bash
+# Process JSON data with jq
+echo '{"name":"John","age":30,"skills":["JavaScript","TypeScript"]}' | aicli jq -f '.skills[]'
 
-```sh
-aichat --role %functions% what is the weather in Paris?
-aichat --agent todo list all my todos
+# Process a file and extract specific data
+aicli jq -f '.users[] | select(.active)' -i "$(cat users.json)"
 ```
 
-## Writing Your Own Tools
+### Checking Dependencies
 
-Building tools for our platform is remarkably straightforward. You can leverage your existing programming knowledge, as tools are essentially just functions written in your preferred language.
+```bash
+# Check if all dependencies are properly installed and configured
+aicli check
+```
 
-LLM Functions automatically generates the JSON declarations for the tools based on **comments**. Refer to `./tools/demo_tool.{sh,js,py}` for examples of how to use comments for autogeneration of declarations.
+## API Usage
 
-### Bash
+You can also use the project programmatically:
 
-Create a new bashscript in the [./tools/](./tools/) directory (.e.g. `execute_command.sh`).
+```typescript
+import { AIChatService } from 'ai-cli-integration';
 
-```sh
-#!/usr/bin/env bash
-set -e
-
-# @describe Execute the shell command.
-# @option --command! The command to execute.
-
-main() {
-    eval "$argc_command" >> "$LLM_OUTPUT"
+async function main() {
+  const chatService = new AIChatService({
+    model: 'gpt-4-turbo',
+    temperature: 0.7,
+  });
+  
+  const response = await chatService.sendMessage('Hello, how are you?');
+  console.log(response.data);
 }
 
-eval "$(argc --argc-eval "$0" "$@")"
+main().catch(console.error);
 ```
 
-### Javascript
+## Contributing
 
-Create a new javascript in the [./tools/](./tools/) directory (.e.g. `execute_js_code.js`).
-
-```js
-/**
- * Execute the javascript code in node.js.
- * @typedef {Object} Args
- * @property {string} code - Javascript code to execute, such as `console.log("hello world")`
- * @param {Args} args
- */
-exports.run = function ({ code }) {
-  eval(code);
-}
-
-```
-
-### Python
-
-Create a new python script in the [./tools/](./tools/) directory (e.g. `execute_py_code.py`).
-
-```py
-def run(code: str):
-    """Execute the python code.
-    Args:
-        code: Python code to execute, such as `print("hello world")`
-    """
-    exec(code)
-
-```
-
-## Writing Your Own Agents
-
-Agent = Prompt + Tools (Function Calling) + Documents (RAG), which is equivalent to OpenAI's GPTs.
-
-The agent has the following folder structure:
-```
-└── agents
-    └── myagent
-        ├── functions.json                  # JSON declarations for functions (Auto-generated)
-        ├── index.yaml                      # Agent definition
-        ├── tools.txt                       # Shared tools
-        └── tools.{sh,js,py}                # Agent tools 
-```
-
-The agent definition file (`index.yaml`) defines crucial aspects of your agent:
-
-```yaml
-name: TestAgent                             
-description: This is test agent
-version: 0.1.0
-instructions: You are a test ai agent to ... 
-conversation_starters:
-  - What can you do?
-variables:
-  - name: foo
-    description: This is a foo
-documents:
-  - local-file.txt
-  - local-dir/
-  - https://example.com/remote-file.txt
-```
-
-Refer to [./agents/demo](https://github.com/sigoden/llm-functions/tree/main/agents/demo) for examples of how to implement a agent.
-
-## MCP (Model Context Protocol)
-
-- [mcp/server](https://github.com/sigoden/llm-functions/tree/main/mcp/server): Let LLM-Functions tools/agents be used through the Model Context Protocol. 
-- [mcp/bridge](https://github.com/sigoden/llm-functions/tree/main/mcp/bridge): Let external MCP tools be used by LLM-Functions.
-
-## Documents
-
-- [Tool Guide](https://github.com/sigoden/llm-functions/blob/main/docs/tool.md)
-- [Agent Guide](https://github.com/sigoden/llm-functions/blob/main/docs/agent.md)
-- [Argc Commands](https://github.com/sigoden/llm-functions/blob/main/docs/argcfile.md)
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-The project is under the MIT License, Refer to the [LICENSE](https://github.com/sigoden/llm-functions/blob/main/LICENSE) file for detailed information.
+This project is licensed under the MIT License - see the LICENSE file for details.

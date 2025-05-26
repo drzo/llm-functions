@@ -1,19 +1,34 @@
-/tmp
-/tools.txt
-/agents.txt
-functions.json
-/bin
-/cache
-/agents/_*
-/tools/_*
-/tools/web_search.*
-/tools/code_interpreter.*
-/.env
-__pycache__
-/.venv
-node_modules
-/package.json
-package-lock.json
-*.lock
-/mcp.json
+# Node.js
+node_modules/
+dist/
+coverage/
+npm-debug.log
+yarn-error.log
+.npm/
+
+# TypeScript
+*.tsbuildinfo
+
+# Environment variables
 .env
+
+# Editor directories
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Log files
+logs/
+*.log
+
+# Cache and temp files
+cache/
+.tmp/
+
+# Project specific
+.aicli/
