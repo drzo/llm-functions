@@ -1,73 +1,26 @@
-// Type definitions for the project
+export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
-// Command Line Configuration
-export interface CliConfig {
-  verbose: boolean;
-  configPath: string;
-  functionsDir?: string;
-  debug?: boolean;
-}
-
-// AI Chat Options
-export interface ChatOptions {
+export interface AiChatConfig {
   model: string;
-  maxTokens?: number;
-  temperature?: number;
-  systemPrompt?: string;
+  apiKey: string;
+  temperature: number;
+  maxTokens: number;
 }
 
-// Function Call Definition
-export interface FunctionDefinition {
-  name: string;
-  description: string;
-  parameters: {
-    type: string;
-    properties: Record<string, any>;
-    required?: string[];
-  };
+export interface LlmFunctionsConfig {
+  directory: string;
+  tools: string[];
+  agents: string[];
 }
 
-// Function Call Result
-export interface FunctionResult {
-  name: string;
-  result: any;
-  error?: Error;
-  duration?: number;
+export interface LoggingConfig {
+  level: LogLevel;
+  file?: string;
 }
 
-// Log Levels
-export type LogLevel = 'error' | 'warn' | 'info' | 'debug' | 'verbose';
-
-// Configuration
 export interface AppConfig {
-  aiChat: {
-    model: string;
-    apiKey: string;
-    temperature: number;
-    maxTokens: number;
-  };
-  llmFunctions: {
-    directory: string;
-    tools: string[];
-    agents: string[];
-  };
-  logging: {
-    level: LogLevel;
-    file?: string;
-  };
-}
-
-// JQ Processing Options
-export interface JqOptions {
-  filter: string;
-  input: any;
-  raw?: boolean;
-  slurp?: boolean;
-}
-
-// Command Results
-export interface CommandResult {
-  success: boolean;
-  data?: any;
-  error?: Error | string;
+  aiChat: AiChatConfig;
+  llmFunctions: LlmFunctionsConfig;
+  logging: LoggingConfig;
+  [key: string]: any;
 }

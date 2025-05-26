@@ -61,21 +61,24 @@ export const saveConfig = (config: AppConfig, configPath: string): void => {
  * @param overrideConfig The configuration to override with
  * @returns The merged configuration
  */
-const mergeConfigs = (baseConfig: AppConfig, overrideConfig: any): AppConfig => {
+const mergeConfigs = <T extends Record<string, any>>(baseConfig: T, overrideConfig: Record<string, any>): T => {
   const result = { ...baseConfig };
   
   for (const key of Object.keys(overrideConfig)) {
     if (key in baseConfig) {
       if (
-        typeof baseConfig[key as keyof AppConfig] === 'object' && 
-        !Array.isArray(baseConfig[key as keyof AppConfig])
+        typeof baseConfig[key] === 'object' && 
+        baseConfig[key] !== null &&
+        !Array.isArray(baseConfig[key]) &&
+        typeof overrideConfig[key] === 'object' &&
+        overrideConfig[key] !== null &&
+        !Array.isArray(overrideConfig[key])
       ) {
-        result[key as keyof AppConfig] = mergeConfigs(
-          baseConfig[key as keyof AppConfig] as any, 
-          overrideConfig[key]
-        );
+        // Both values are objects, merge them recursively
+        result[key] = mergeConfigs(baseConfig[key], overrideConfig[key]);
       } else {
-        result[key as keyof AppConfig] = overrideConfig[key];
+        // Simple value, override it
+        result[key] = overrideConfig[key];
       }
     }
   }
